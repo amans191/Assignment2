@@ -1,4 +1,8 @@
 import pandas as pd
+from sklearn import preprocessing
+from sklearn.feature_extraction import DictVectorizer
+
+
 
 encoding = 'utf-8-sig'
 
@@ -16,14 +20,20 @@ CatFrame = DataFrame[CatFeatures]
 
 ContFrame = DataFrame.drop(CatFeatures,axis=1)
 
-print(ContFrame.head())
+# print(ContFrame.head())
 
 CatFrame.replace('?','NA')
 CatFrame.fillna( 'NA', inplace = True )
 
 
+CatDict = CatFrame.T.to_dict().values()
 
+vectorizer = DictVectorizer( sparse= False)
+vecCatDF = vectorizer.fit_transform(CatDict)
 
+encoding_dictionary = vectorizer.vocabulary_
+
+newDataFrame = (( ContFrame.as_matrix(),vecCatDF ))
 
 
 #
@@ -72,4 +82,4 @@ CatFrame.fillna( 'NA', inplace = True )
 # DataFrame = pd.read_csv(Location, names=[one, two, three, four, five, six, seven,eight,nine,ten, eleven, twelve, thirteen,
 #                                   fourteen, fifteen, sixteen, seventeen, eighteen])
 #
-print(DataFrame.head())
+print(newDataFrame)
