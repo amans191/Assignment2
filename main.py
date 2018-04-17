@@ -2,9 +2,6 @@ import pandas as pd
 
 encoding = 'utf-8-sig'
 
-pd.set_option('display.width', 5000)
-pd.set_option('display.max_columns', 60)
-
 DataFrame = pd.read_csv('./queries.txt', header=None)
 
 Location2 = r'./datadescription.txt'
@@ -51,5 +48,10 @@ eighteen = sk15['Names']
 Location = r'./queries.txt'
 DataFrame = pd.read_csv(Location, names=[one, two, three, four, five, six, seven,eight,nine,ten, eleven, twelve, thirteen,
                                   fourteen, fifteen, sixteen, seventeen, eighteen])
+
+pd.set_option('display.width', 5000)
+pd.set_option('display.max_columns', 60)
+
+DataFrame['Outlier'] = True
 
 print(DataFrame)
