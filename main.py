@@ -12,9 +12,6 @@ encoding = 'utf-8-sig'
 pd.set_option('display.width', 5000)
 pd.set_option('display.max_columns', 60)
 
-# headersfile = open('./data/headers.txt')
-# headers = headersfile.read().split()
-
 headers = []
 
 with open('data/dataDescription.txt', 'r') as dd:
@@ -46,7 +43,7 @@ NewData = pd.read_csv('./data/trainingSetNew.csv')
 
 target = NewData['y']
 
-target.to_csv('./targetfeat.csv', index=False)
+#target.to_csv('./targetfeat.csv', index=False)
 
 numericfeat = ['age', 'balance', 'day', 'duration', 'campaign', 'pdays', 'previous']
 numDataFrame = NewData[numericfeat]
