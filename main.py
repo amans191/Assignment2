@@ -1,15 +1,11 @@
 import pandas as pd
 import numpy as np
-from sklearn import preprocessing, tree
+from sklearn import tree
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
-import matplotlib.pyplot as mpl
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import cross_val_score
-from sklearn.feature_selection import SelectKBest
-from sklearn.feature_selection import f_classif
 
 encoding = 'utf-8-sig'
 
@@ -29,7 +25,7 @@ DataFrame.head()
 CatFeatures = ['job', 'loan', 'marital', 'education', 'default', 'housing', 'contact', 'month', 'poutcome']
 CatFrame = DataFrame[CatFeatures]
 
-ContFrame = DataFrame.drop(CatFeatures + ['id', 'balance', 'day', 'duration', 'previous', 'y'], axis=1)
+ContFrame = DataFrame.drop(CatFeatures + ['id', 'y'], axis=1)
 
 CatFrame.head()
 
@@ -60,8 +56,6 @@ DecisionTreeModel.fit(x_train, y_train)
 pred = DecisionTreeModel.predict(x_test)
 print('Accuracy= ' + str(accuracy_score(y_test, pred, normalize=True)))
 
-
-
 # KNN
 # testing KNN for different Ks using cross-validation for test error
 
@@ -87,33 +81,43 @@ knn.fit(x_train, y_train.values.ravel())
 pred = knn.predict(x_test)
 print(accuracy_score(y_test, pred))
 
-
-
-
 # KNN had better predictions, so going ahead with KNN
 
 QueryFrame = pd.read_csv('./data/queries.txt', names=headers, na_values=['?'])
 
 QueryCatFeatures = ['job', 'loan', 'marital', 'education', 'default', 'housing', 'contact', 'month', 'poutcome']
+
 QueryCatFrame = QueryFrame[CatFeatures]
-QueryContFrame = QueryFrame.drop(CatFeatures + ['id', 'balance', 'day', 'duration', 'previous', 'y'], axis=1)
+QueryContFrame = QueryFrame.drop(CatFeatures + ['id', 'y'], axis=1)
 
-querycat_df = QueryCatFrame.T.to_dict().values()
-queryvec_cat_df = vectorizer.fit_transform(querycat_df)
-query_df = np.hstack((QueryContFrame.as_matrix(), queryvec_cat_df))
+# querycat_df = QueryCatFrame.T.to_dict().values()
+# queryvec_cat_df = vectorizer.fit_transform(querycat_df)
+# query_df = np.hstack((QueryContFrame.as_matrix(), queryvec_cat_df))
 
-query_pred = knn.predict(query_df)
+# Split is 80/20
+instanceTrain, instanceTest, targetTrain, targetTest = train_test_split(train_df, target, test_size=0.2, random_state=0)
+
+knn.fit(instanceTrain, targetTrain)
+
+predictions = knn.predict(instanceTest)
+# query_pred = knn.predict(query_df)
 
 # Making asnwer file
 
 # getting ids as array
-ids = QueryFrame['id'].ravel()
-print(len(QueryFrame['id'].ravel()))
-# filedata = np.array([ids,query_pred])
-# filedata = filedata.T
-# print(filedata)
-withquotes = ["\"" + item + "\"" for item in query_pred]
-np.savetxt('predictions.txt', np.transpose([ids, withquotes]), fmt='%.18s', delimiter=',', newline='\r\n')
+output = ""
+for i in range(len(QueryFrame.index)):
+    output += (str(QueryFrame['id'].ravel()) + ",\"" + str(predictions[i]) + "\"\n")
 
-# print(zip(ids,query_pred))
-# np.savetxt('myfile.txt', np.transpose([query_pred, ids]))
+# Write to file
+text_file = open("predictions.txt", "w")
+text_file.write("%s" % output)
+text_file.close()
+
+# ids = QueryFrame['id'].ravel()
+# print(len(QueryFrame['id'].ravel()))
+#
+# withquotes = ["\"" + item + "\"" for item in predictions]
+# np.savetxt('predictions.txt', np.transpose([ids, withquotes]), fmt='%.18s', delimiter=',', newline='\r\n')
+
+
