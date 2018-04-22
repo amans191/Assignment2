@@ -100,5 +100,3 @@ query_pred = KNN.predict(query_df)
 ids = QueryFrame['id'].ravel()
 withquotes = ["\"" + item + "\"" for item in query_pred]
 np.savetxt('predictions.txt', np.transpose([ids, withquotes]), fmt='%.18s', delimiter=',', newline='\r\n')
-
-
