@@ -8,6 +8,8 @@ from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as mpl
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import cross_val_score
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import f_classif
 
 encoding = 'utf-8-sig'
 
@@ -27,7 +29,7 @@ DataFrame.head()
 CatFeatures = ['job', 'loan', 'marital', 'education', 'default', 'housing', 'contact', 'month', 'poutcome']
 CatFrame = DataFrame[CatFeatures]
 
-ContFrame = DataFrame.drop(CatFeatures + ['id', 'y'], axis=1)
+ContFrame = DataFrame.drop(CatFeatures + ['id', 'balance', 'day', 'duration', 'previous', 'y'], axis=1)
 
 CatFrame.head()
 
@@ -50,13 +52,15 @@ train_df = np.hstack((ContFrame.as_matrix(), vec_cat_df))
 # Create decision tree (ID3)
 DecisionTreeModel = tree.DecisionTreeClassifier(criterion='entropy')
 target = DataFrame['y']
-print(target[0])
+
 x_train, x_test, y_train, y_test = train_test_split(train_df, target, test_size=0.2, random_state=0)
 
 DecisionTreeModel.fit(x_train, y_train)
 
 pred = DecisionTreeModel.predict(x_test)
 print('Accuracy= ' + str(accuracy_score(y_test, pred, normalize=True)))
+
+
 
 # KNN
 # testing KNN for different Ks using cross-validation for test error
@@ -83,13 +87,16 @@ knn.fit(x_train, y_train.values.ravel())
 pred = knn.predict(x_test)
 print(accuracy_score(y_test, pred))
 
+
+
+
 # KNN had better predictions, so going ahead with KNN
 
 QueryFrame = pd.read_csv('./data/queries.txt', names=headers, na_values=['?'])
 
 QueryCatFeatures = ['job', 'loan', 'marital', 'education', 'default', 'housing', 'contact', 'month', 'poutcome']
 QueryCatFrame = QueryFrame[CatFeatures]
-QueryContFrame = QueryFrame.drop(CatFeatures + ['id', 'y'], axis=1)
+QueryContFrame = QueryFrame.drop(CatFeatures + ['id', 'balance', 'day', 'duration', 'previous', 'y'], axis=1)
 
 querycat_df = QueryCatFrame.T.to_dict().values()
 queryvec_cat_df = vectorizer.fit_transform(querycat_df)
