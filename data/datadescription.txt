@@ -1,4 +1,4 @@
-Data Set Information: 
+Data Set Information:
 
 The classification goal is to predict if the client will subscribe a term deposit after they have been contacted by phone (variable y).
 
