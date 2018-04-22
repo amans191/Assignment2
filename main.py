@@ -25,7 +25,7 @@ DataFrame.head()
 CatFeatures = ['job', 'loan', 'marital', 'education', 'default', 'housing', 'month', 'poutcome', 'day','duration','contact']
 CatFrame = DataFrame[CatFeatures]
 
-ContFrame = DataFrame.drop(CatFeatures + ['id','y'], axis=1)
+ContFrame = DataFrame.drop(CatFeatures + ['id', 'y'], axis=1)
 
 CatFrame.head()
 
@@ -78,8 +78,9 @@ train_df = np.hstack((ContFrame.as_matrix(), vec_cat_df))
 # pred = KNN.predict(x_test)
 # print(accuracy_score(y_test, pred))
 #
-# # KNN had better predictions, so going ahead with KNN
-# # training the classifier with the whole training set
+# KNN had better predictions, so going ahead with KNN
+# training the classifier with the whole training set
+
 KNN = KNeighborsClassifier(n_neighbors=41)
 KNN.fit(train_df,DataFrame['y'])
 
